@@ -49,7 +49,7 @@ small{color:var(--ink2)}
   <div class="res" id="res">Dit ark er udgivet. Linket virker om et til to minutter.<br><a id="lnk" target="_blank" rel="noopener"></a><br><button class="btn ghost" id="cp" style="margin-top:10px">Kopiér link</button></div>
 </div>
 <script>
-const FN = 'https://hdffpdighiblwabimelg.supabase.co/functions/v1/publish';
+const FN = 'https://hdffpdighiblwabimelg.supabase.co/functions/v1/Publish';
 const KEY = 'sb_publishable_vbwoHt0dhHIFhwSM0d_R-A_LfZC52pS';
 const $ = s => document.querySelector(s);
 let B64 = '';
@@ -74,7 +74,8 @@ $('#code').oninput = ready; $('#name').oninput = ready;
 async function send(overwrite) {
   const r = await fetch(FN, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: KEY },
     body: JSON.stringify({ code: $('#code').value, filename: $('#name').value.trim(), content: B64, overwrite }) });
-  return { status: r.status, data: await r.json().catch(() => ({})) };
+  const txt = await r.text(); let data = {}; try { data = JSON.parse(txt); } catch (e) { data = { error: 'Svar fra serveren (' + r.status + '): ' + txt.slice(0, 200) }; }
+  return { status: r.status, data };
 }
 $('#go').onclick = async () => {
   $('#go').disabled = true; $('#res').style.display = 'none'; msg('Udgiver. Det kan tage lidt tid ved store filer …');
@@ -85,8 +86,8 @@ $('#go').onclick = async () => {
       else { msg('Afbrudt. Vælg et andet filnavn', 'err'); $('#go').disabled = false; return; }
     }
     if (x.data.ok) { msg(''); $('#lnk').textContent = x.data.url; $('#lnk').href = x.data.url; $('#res').style.display = 'block'; }
-    else msg(x.data.error || 'Det lykkedes ikke. Prøv igen', 'err');
-  } catch (e) { msg('Ingen forbindelse. Tjek internettet og prøv igen', 'err'); }
+    else msg((x.data.error || x.data.message || 'Det lykkedes ikke') + ' [' + x.status + ']', 'err');
+  } catch (e) { msg('Kunne ikke nå funktionen. Filen er ' + (B64.length / 1048576 * 0.75).toFixed(1) + ' MB. Teknisk fejl: ' + e.message + ' (adresse ' + FN.split('/').pop() + ')', 'err'); }
   $('#go').disabled = false; ready();
 };
 $('#cp').onclick = async () => { try { await navigator.clipboard.writeText($('#lnk').href); $('#cp').textContent = 'Kopieret'; } catch (e) { $('#cp').textContent = 'Markér og kopiér linket'; } };
