@@ -45,7 +45,7 @@ textarea{min-height:110px;resize:vertical}
 </head>
 <body>
 <div id="app"></div>
-<div class="foot">Kvadrant Poll v1</div>
+<div class="foot">Kvadrant Poll v2</div>
 <script>
 const CONFIG = {
   url: 'https://hdffpdighiblwabimelg.supabase.co',
@@ -53,7 +53,7 @@ const CONFIG = {
 };
 const H = { 'Content-Type': 'application/json', apikey: CONFIG.key };
 const rpc = (fn, b) => fetch(CONFIG.url + '/rest/v1/rpc/' + fn, { method: 'POST', headers: H, body: JSON.stringify(b) })
-  .then(async r => { if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).message || m; } catch (e) {} throw new Error(m); } return r.json(); });
+  .then(async r => { if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).message || m; } catch (e) {} throw new Error(m); } const t = await r.text(); return t ? JSON.parse(t) : null; });
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kvadrant Poll Præsentatør v1</title>
+<title>Kvadrant Poll Præsentatør v2</title>
 <style>
 :root{--bg:#F3EFE9;--ink:#3C2C1C;--ink2:#5D4B3D;--tan:#8A6A4C;--line:#E3DBD0;--red:#BF574E;--green:#4F9461;--gold:#E6B840}
 *{box-sizing:border-box}
@@ -80,7 +80,7 @@ small{color:var(--ink2)}
 <body>
 
 <div id="setup">
-  <div class="bar">Kvadrant Poll <span class="ver">v1</span></div>
+  <div class="bar">Kvadrant Poll <span class="ver">v2</span></div>
   <div class="wrap">
     <h1>Opsæt din afstemning</h1>
     <p class="lead">Skriv spørgsmålene, start, og vis siden på skærmen. Deltagerne følger med på deres telefon.</p>
@@ -132,7 +132,7 @@ const CONFIG = {
 };
 const H = { 'Content-Type': 'application/json', apikey: CONFIG.key };
 const rpc = (fn, b) => fetch(CONFIG.url + '/rest/v1/rpc/' + fn, { method: 'POST', headers: H, body: JSON.stringify(b) })
-  .then(async r => { if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).message || m; } catch (e) {} throw new Error(m); } return r.json(); });
+  .then(async r => { if (!r.ok) { let m = 'HTTP ' + r.status; try { m = (await r.json()).message || m; } catch (e) {} throw new Error(m); } const t = await r.text(); return t ? JSON.parse(t) : null; });
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ss = (k, v) => { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) {} return null; };
